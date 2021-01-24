@@ -8,10 +8,10 @@ from my2d import *
 #luk = LUplot()
 #luk.draw('luk')
 #4,5,6,8,10
-dict_n = {4: [vert4x4, "4x4"], 5: [vert5x5, "5x5"], 6: [vert6x6, "6x6"], 8: [vert8x8, "8x8"],   10: [vert10x10, "10x10"]}
+dict_n = {4: [vert4x4, "4x4"], 5: [vert5x5, "5x5"], 6: [vert6x6, "6x6"], 8: [vert8x8, "8x8"], 10: [vert10x10, "10x10"], 20: [vert20x20, "20x20"], 40: [vert40x40, "40x40"], 60: [vert60x60, "60x60"]}
 
 n = dict_n.get(int(
-    input("Wybierz wymiar(n) macierzy[4, 5, 6, 8, 10]:")
+    input("Wybierz wymiar(n) macierzy[4, 5, 6, 8, 10, 20, 40, 60]:")
 ))
 wyb_wym_lista = n[0]
 wyb_graf = n[1]
@@ -19,8 +19,7 @@ wyb_par = 2 #0-7
 
 
 
-D = np.array([[1, 0],
-              [0, 1]])
+D = np.array([[1, 0], [0, 1]])
 print("macierz D")
 print(D)
 print(50 * '-')
@@ -183,9 +182,9 @@ min_ = min(takty)
 liczba_el_p = len(dict_p_ord)
 
 print("Przyjmujemy, że")
-print("Fmax=354MHz, EPlatency=24")
+print("Fm_ax=354MHz, Ep_latency=24")
 print("Korzystając z poniższego wzoru obliczamy Ts:")
-print("Ts = (Liczba_Ep * Ep_latency + (Ep_max - Ep_min) + 1) / Fmax")
+print("Ts = (Liczba_Ep * Ep_latency + (Ep_max - Ep_min) + 1) / F_max")
 Ts = (liczba_el_p * EPLatency + (max_ - min_) + 1) / Fmax
 print("Ts = " + str(round(Ts, 5)) + " us")
 print(50 * '-')
@@ -214,6 +213,8 @@ Fs = str(list_merged[wyb_par][0])
 Ft = str(list_merged[wyb_par][1])
 print("Fs=" + Fs + ", Ft=" + Ft)
 print("mult=" + str(result[0]) + ", lut=" + str(result[1]) + " ,mem=" + str(result[2]))
+
+input("Wciśnij Enter by kontynuować...")
 
 Subplot().draw(wyb_graf, dict_p_ord, napis_FsFt)
 
