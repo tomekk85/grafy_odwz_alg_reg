@@ -5,9 +5,16 @@ import matplotlib.ticker as plticker
 from my3d import *
 from my2d import *
 
+#luk = LUplot()
+#luk.draw('luk')
+#4,5,6,8,10
+dict_n = {4: [vert4x4, "4x4"], 5: [vert5x5, "5x5"], 6: [vert6x6, "6x6"], 8: [vert8x8, "8x8"],   10: [vert10x10, "10x10"]}
 
-wyb_wym_lista = vert5x5
-wyb_graf = "5x5"
+n = dict_n.get(int(
+    input("Wybierz wymiar(n) macierzy[4, 5, 6, 8, 10]:")
+))
+wyb_wym_lista = n[0]
+wyb_graf = n[1]
 wyb_par = 2 #0-7
 
 
@@ -120,11 +127,14 @@ counter = 1
 # elementy przetwarzające zbieramy do słownika
 
 dict_p = {} # słownik elemntów przetwarzających
+takty = [] # tablica taktów
+dict_2ep ={} # słownik wykorzystany do obliczenia złożoności sprzętowej macierzy procesorowej
 
 print("\nElementy przetwarzające.")
 for wierzch in list_v:
     el_p = np.dot(wierzch, inp_[0])
     takt = np.dot(wierzch, inp_[1])
+    takty.append(takt)
     print(
         str(counter) + ". K=" + str(wierzch) + " ||| Fs * K (el. przetw)= " + str(el_p)
         + " ||| Ft * K (takt) = " + str(takt)
@@ -139,6 +149,7 @@ for wierzch in list_v:
     dict_p.update({el_p: upd})
 
     counter += 1
+print(50 * '-')
 input("Wciśnij Enter by kontynuować...")
 
 # sortujemy słownik rosnąco wg klucza (el przetwarzający)
@@ -149,12 +160,60 @@ dict_p_ord = collections.OrderedDict(sorted(dict_p.items()))
 print("\nGrupujemy wierzchołki w poszczególnych elementach przetwarzających.")
 for key in dict_p_ord:
     print("Ep[" + str(key) + "]")
+    klucz = key# złożoność
     for row in dict_p_ord.get(key):
-        print(str(row[0]) + '. wierzch.=' + str(row[2]) + ' takt=' + str(row[1]))
+        oper = '"* +" '
+        if row[2][0] == row[2][1]:
+            oper = '"/"'
+            dict_2ep.update({klucz: str(dict_2ep.get(klucz)) + " " + oper}) # złożoność
+        else:
+            dict_2ep.update({klucz: str(dict_2ep.get(klucz)) + " " + oper})  # złożoność
 
+        print(str(row[0]) + '. wierzch.=' + str(row[2]) + ' takt=' + str(row[1]) + " operacja " + oper)
+print(50 * '-')
 input("Wciśnij Enter by kontynuować...")
 
 napis_FsFt = ' dla Fs=' + str(list_merged[wyb_par][0]) + ', Ft=' + str(list_merged[wyb_par][1])
+
+
+Fmax = 354
+EPLatency = 24
+max_ = max(takty)
+min_ = min(takty)
+liczba_el_p = len(dict_p_ord)
+
+print("Przyjmujemy, że")
+print("Fmax=354MHz, EPlatency=24")
+print("Korzystając z poniższego wzoru obliczamy Ts:")
+print("Ts = (Liczba_Ep * Ep_latency + (Ep_max - Ep_min) + 1) / Fmax")
+Ts = (liczba_el_p * EPLatency + (max_ - min_) + 1) / Fmax
+print("Ts = " + str(round(Ts, 5)) + " us")
+print(50 * '-')
+
+#mult, lut mem
+dziel = np.array([7, 1175, 3])
+dod_mnoz = np.array([2, 1311, 0])
+razem = dziel + dod_mnoz
+
+
+for key in dict_2ep:
+    if dict_2ep.get(key).find('"* +"') != -1 and dict_2ep.get(key).find('"/"') != -1:
+        dict_2ep.update({key: razem})
+    elif dict_2ep.get(key).find('"* +"') != -1:
+        dict_2ep.update({key: dod_mnoz})
+    elif dict_2ep.get(key).find('"/"') != -1:
+        dict_2ep.update({key: dziel})
+
+
+result = np.array([0, 0, 0])
+for key in dict_2ep:
+    result += dict_2ep.get(key)
+
+print("Złożoność sprzętowa macierzy procesorowej dla n=" + wyb_graf[0]  + ":")
+Fs = str(list_merged[wyb_par][0])
+Ft = str(list_merged[wyb_par][1])
+print("Fs=" + Fs + ", Ft=" + Ft)
+print("mult=" + str(result[0]) + ", lut=" + str(result[1]) + " ,mem=" + str(result[2]))
 
 Subplot().draw(wyb_graf, dict_p_ord, napis_FsFt)
 
