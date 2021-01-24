@@ -1,18 +1,11 @@
-import numpy as np
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import matplotlib.ticker as plticker
 from my3d import *
 from my2d import *
 
-#luk = LUplot()
-#luk.draw('luk')
-#4,5,6,8,10
 dict_n = {4: [vert4x4, "4x4"], 5: [vert5x5, "5x5"], 6: [vert6x6, "6x6"], 8: [vert8x8, "8x8"], 10: [vert10x10, "10x10"], 20: [vert20x20, "20x20"], 40: [vert40x40, "40x40"], 60: [vert60x60, "60x60"]}
 
-n = dict_n.get(int(
-    input("Wybierz wymiar(n) macierzy[4, 5, 6, 8, 10, 20, 40, 60]:")
-))
+n_ = (input("Wybierz wymiar(n) macierzy[4, 5, 6, 8, 10, 20, 40, 60]:"))
+
+n = dict_n.get(int(n_))
 wyb_wym_lista = n[0]
 wyb_graf = n[1]
 wyb_par = 2 #0-7
@@ -93,19 +86,8 @@ wyb_par = int(input('Wybierz parę[0-7]:'))
 print("\nWybrany przypadek - para: " + str(wyb_par))
 print('Fs=' + str(list_merged[wyb_par][0]) + ', Ft=' + str(list_merged[wyb_par][1]))
 
-# wierzchołki (dla macierzy 5x5)
-list_i = [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5], [4, 5], [1, 1], [2, 2], [3, 3], \
-         [4, 4], [5, 5]
-
-
-list_aurelia = [0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]
-
-
 list_i = wyb_wym_lista
 
-
-
-#list_i = list_aurelia
 # list wierzchołków
 list_v = []
 for item in list_i:
@@ -118,8 +100,6 @@ print(replArrStr(str(list_v)))
 input("Wciśnij Enter by kontynuować...")
 
 inp_ = list_merged[wyb_par]
-
-
 
 counter = 1
 
@@ -169,10 +149,10 @@ for key in dict_p_ord:
             dict_2ep.update({klucz: str(dict_2ep.get(klucz)) + " " + oper})  # złożoność
 
         print(str(row[0]) + '. wierzch.=' + str(row[2]) + ' takt=' + str(row[1]) + " operacja " + oper)
+
 print(50 * '-')
 input("Wciśnij Enter by kontynuować...")
 
-napis_FsFt = ' dla Fs=' + str(list_merged[wyb_par][0]) + ', Ft=' + str(list_merged[wyb_par][1])
 
 
 Fmax = 354
@@ -208,13 +188,15 @@ result = np.array([0, 0, 0])
 for key in dict_2ep:
     result += dict_2ep.get(key)
 
-print("Złożoność sprzętowa macierzy procesorowej dla n=" + wyb_graf[0]  + ":")
+print("Złożoność sprzętowa macierzy procesorowej dla n=" + n_ + ":")
 Fs = str(list_merged[wyb_par][0])
 Ft = str(list_merged[wyb_par][1])
 print("Fs=" + Fs + ", Ft=" + Ft)
 print("mult=" + str(result[0]) + ", lut=" + str(result[1]) + " ,mem=" + str(result[2]))
 
 input("Wciśnij Enter by kontynuować...")
+
+napis_FsFt = ' n=' +n_+ '\nElementy przetwarzające dla Fs=' + str(list_merged[wyb_par][0]) + ', Ft=' + str(list_merged[wyb_par][1])
 
 Subplot().draw(wyb_graf, dict_p_ord, napis_FsFt)
 
